@@ -45,6 +45,12 @@ public class DetailContact extends AppCompatActivity {
             tvPhone.setText("SĐT: " + curContact.getPhone());
             tvAddress.setText("Địa chỉ: " + curContact.getAddress());
             tvEmail.setText("Email: " + curContact.getEmail());
+
+            int avatarId = getResources().getIdentifier("com.example.contactapp:drawable/" + curContact.getAvatar(), null, null);
+            int backgroundId = getResources().getIdentifier("com.example.contactapp:drawable/" + curContact.getBackground(), null, null);
+
+            ivAvatar.setImageResource(avatarId);
+            ivBackground.setImageResource(backgroundId);
         }
 
         if(curContact.isFavourite()){

@@ -7,23 +7,26 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
@@ -31,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ImageView ivMenu;
     private NavigationView navigationView;
 
+    private TextView tvTitle;
     private SearchView svName;
     private List<Contact> contacts;
     private RecyclerView rvContacts;
@@ -48,9 +52,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ContactDao contactDao;
 
     // Default Value
-    private final String DEFAULT_IMAGE_DIRECTORY = "";
     private final String DEFAULT_CONTACT_AVATAR = "ic_baseline_person_24";
-    private final String DEFAULT_CONTACT_BACKGROUND = "defaultContactBackground";
+    private final String DEFAULT_CONTACT_BACKGROUND = "default_contact_background";
     private final boolean DEFAULT_CONTACT_FAVOURITE = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +63,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout = findViewById(R.id.drawerlayout);
 
         mapComponents();
-        initialDatabase();
         initialEvents();
 
         viewModel.getContacts().observe(this, integer -> {
@@ -71,21 +73,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             adapter.notifyDataSetChanged();
         });
 
-    }
-
-    private void initialDatabase() {
-        for (Contact contact : contacts){
-            viewModel.insert(contact);
-        }
-//        AsyncTask.execute(() -> {
-//            database = ContactDatabase.getInstance(getApplicationContext());
-//            contactDao = database.contactDao();
-//            List<Contact> dbContacts = contactDao.getAll();
-//
-//            for (Contact contact : contacts){
-//                contactDao.insertContacts(contact);
-//            }
-//        });
     }
 
     private void initialEvents() {
@@ -113,14 +100,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if(name.isEmpty() || phone.isEmpty() || address.isEmpty() || email.isEmpty()){
                     Toast.makeText(MainActivity.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
                 } else {
-                    Contact contact = new Contact(name, phone, address, email, DEFAULT_CONTACT_AVATAR, DEFAULT_CONTACT_BACKGROUND, DEFAULT_CONTACT_FAVOURITE);
+                    Contact contact = new Contact(contacts.size() + 1, name, phone, address, email, DEFAULT_CONTACT_AVATAR, DEFAULT_CONTACT_BACKGROUND, DEFAULT_CONTACT_FAVOURITE);
 
                     boolean isAdded = false;
                     int i;
                     for(i = 0; i < contacts.size(); i++){
                         if (contacts.get(i).getFirstName().compareToIgnoreCase(contact.getFirstName()) > 0){
                             contacts.add(i, contact);
-                            viewModel.getContacts().getValue().add(i, contact);
                             isAdded = true;
                             break;
                         }
@@ -128,7 +114,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                     if(!isAdded) {
                         contacts.add(contact);
-                        viewModel.getContacts().getValue().add(contact);
                     }
 
                     viewModel.insert(contact);
@@ -137,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     curHighlightIndex = i;
                     new Handler().postDelayed(() -> {
                         if(rvLayout.findViewByPosition(curHighlightIndex) != null){
-                            rvLayout.findViewByPosition(curHighlightIndex).setBackgroundColor(highlightColor);
+                            Objects.requireNonNull(rvLayout.findViewByPosition(curHighlightIndex)).setBackgroundColor(highlightColor);
                             curHighlightIndex  = -1;
                         }
                     }, 500);
@@ -153,10 +138,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 for(int j = rvLayout.findFirstVisibleItemPosition(); j <= rvLayout.findLastVisibleItemPosition(); j++){
-                    rvLayout.findViewByPosition(j).setBackgroundColor(normalColor);
+                    Objects.requireNonNull(rvLayout.findViewByPosition(j)).setBackgroundColor(normalColor);
                 }
                 if(curHighlightIndex != -1 && rvLayout.findViewByPosition(curHighlightIndex) != null){
-                    rvLayout.findViewByPosition(curHighlightIndex).setBackgroundColor(highlightColor);
+                    Objects.requireNonNull(rvLayout.findViewByPosition(curHighlightIndex)).setBackgroundColor(highlightColor);
                 }
             }
         });
@@ -179,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             new Handler().postDelayed(() -> {
                                 // set màu nổi cho phần tử đang tìm, thêm vào danh sách nổi
                                 if(rvLayout.findViewByPosition(curHighlightIndex) != null){
-                                    rvLayout.findViewByPosition(curHighlightIndex).setBackgroundColor(highlightColor);
+                                    Objects.requireNonNull(rvLayout.findViewByPosition(curHighlightIndex)).setBackgroundColor(highlightColor);
                                 }
                             }, 500);
 
@@ -197,12 +182,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             curHighlightIndex = -1;
             return false;
         });
+
     }
 
     private void mapComponents() {
         viewModel = ViewModelProviders.of(MainActivity.this).get(MyViewModel.class);
-        contacts = new ArrayList<>(viewModel.getContacts().getValue());
+        contacts = viewModel.getContacts().getValue();
 
+        tvTitle = findViewById(R.id.tv_title);
         svName = findViewById(R.id.sv_name);
         rvContacts = findViewById(R.id.rv_contacts);
         fabAdd = findViewById(R.id.fab_add);

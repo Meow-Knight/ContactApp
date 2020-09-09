@@ -14,7 +14,7 @@
         android:layout_height="250dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/background3"/>
+        android:src="@drawable/default_contact_background"/>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cv_container"
@@ -48,7 +48,7 @@
         android:layout_marginBottom="24dp"
         android:gravity="center_vertical"
         android:text="Name"
-        android:textColor="#BAB5B5"
+        android:textColor="@color/black"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="@+id/cv_container"
         app:layout_constraintStart_toEndOf="@+id/cv_container" />
