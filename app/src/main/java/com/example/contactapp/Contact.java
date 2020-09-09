@@ -1,15 +1,58 @@
 package com.example.contactapp;
 
-import java.util.Comparator;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
-public class Contact{
-    private String name, address, email, phone;
+import java.io.Serializable;
 
-    public Contact(String name, String address, String email, String phone){
+@Entity (tableName = "contact")
+public class Contact implements Serializable {
+    @PrimaryKey (autoGenerate = true)
+    @ColumnInfo (name = "id")
+    private int id;
+
+    @ColumnInfo (name = "name")
+    private String name;
+
+    @ColumnInfo (name = "address")
+    private String address;
+
+    @ColumnInfo (name = "email")
+    private String email;
+
+    @ColumnInfo (name = "phone")
+    private String phone;
+
+    @ColumnInfo (name = "avatar")
+    private String avatar;
+
+    @ColumnInfo (name = "background")
+    private String background;
+
+    @ColumnInfo (name = "isFavourite")
+    private boolean isFavourite;
+
+    public Contact(int id, String name, String address, String email, String phone, String avatar, String background, boolean isFavourite){
+        this.id = id;
         this.name = name;
         this.address = address;
         this.email = email;
         this.phone = phone;
+        this.avatar = avatar;
+        this.background = background;
+        this.isFavourite = isFavourite;
+    }
+
+    public Contact(String name, String address, String email, String phone, String avatar, String background, boolean isFavourite){
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.email = email;
+        this.phone = phone;
+        this.avatar = avatar;
+        this.background = background;
+        this.isFavourite = isFavourite;
     }
 
     public Contact() {
@@ -47,8 +90,41 @@ public class Contact{
         this.phone = phone;
     }
 
+    public void setId(int id){
+        this.id = id;
+    }
+
+    public int getId(){
+        return id;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getBackground() {
+        return background;
+    }
+
+    public void setBackground(String background) {
+        this.background = background;
+    }
+
+    public boolean isFavourite() {
+        return isFavourite;
+    }
+
+    public void setFavourite(boolean favourite) {
+        isFavourite = favourite;
+    }
+
     public String getFirstName(){
-        String[] s = name.split(" ");
+        name = name.trim();
+        String[] s = name.split("[\\s]+");
         return s[s.length - 1];
     }
 }

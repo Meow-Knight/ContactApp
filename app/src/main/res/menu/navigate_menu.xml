@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/item_home"
+        android:title="@string/home_title"
+        android:icon="@drawable/real_estate24px"/>
+    <item android:id="@+id/item_personal"
+        android:title="@string/account_item"
+        android:icon="@drawable/personal_information24px"/>
+    <item
+        android:id="@+id/item_other"
+        android:title="@string/item_other">
+
+        <menu>
+            <item android:id="@+id/item_assistance"
+                android:title="@string/assistance_item"
+                android:icon="@drawable/headset"/>
+            <item android:id="@+id/item_version"
+                android:title="@string/version_item"
+                android:icon="@drawable/infor2"/>
+        </menu>
+
+
+    </item>
+
+</menu>

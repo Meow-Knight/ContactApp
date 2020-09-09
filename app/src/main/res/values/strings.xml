@@ -2,4 +2,11 @@
     <string name="app_name">ContactApp</string>
     <string name="add_contact">Add</string>
     <string name="cancel">Cancel</string>
+    <string name="searchHint">Tìm kiếm theo họ và tên...</string>
+    <string name="main_title">Contact App</string>
+    <string name="home_title">Trang chủ</string>
+    <string name="account_item">Thông tin tài khoản</string>
+    <string name="assistance_item">Hỗ trợ và phản hồi</string>
+    <string name="version_item">Thông tin phiên bản</string>
+    <string name="item_other">Others</string>
 </resources>

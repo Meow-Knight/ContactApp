@@ -2,25 +2,34 @@ package com.example.contactapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.MenuItem;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+
+    private DrawerLayout drawerLayout;
+    private ImageView ivMenu;
+    private NavigationView navigationView;
 
     private SearchView svName;
     private List<Contact> contacts;
@@ -34,13 +43,24 @@ public class MainActivity extends AppCompatActivity {
     private final int highlightColor = Color.LTGRAY;
     private final int normalColor = Color.WHITE;
 
+    // Database
+    private ContactDatabase database;
+    private ContactDao contactDao;
 
+    // Default Value
+    private final String DEFAULT_IMAGE_DIRECTORY = "";
+    private final String DEFAULT_CONTACT_AVATAR = "ic_baseline_person_24";
+    private final String DEFAULT_CONTACT_BACKGROUND = "defaultContactBackground";
+    private final boolean DEFAULT_CONTACT_FAVOURITE = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        drawerLayout = findViewById(R.id.drawerlayout);
+
         mapComponents();
+        initialDatabase();
         initialEvents();
 
         viewModel.getContacts().observe(this, integer -> {
@@ -51,10 +71,26 @@ public class MainActivity extends AppCompatActivity {
             adapter.notifyDataSetChanged();
         });
 
+    }
 
+    private void initialDatabase() {
+        for (Contact contact : contacts){
+            viewModel.insert(contact);
+        }
+//        AsyncTask.execute(() -> {
+//            database = ContactDatabase.getInstance(getApplicationContext());
+//            contactDao = database.contactDao();
+//            List<Contact> dbContacts = contactDao.getAll();
+//
+//            for (Contact contact : contacts){
+//                contactDao.insertContacts(contact);
+//            }
+//        });
     }
 
     private void initialEvents() {
+        ivMenu.setOnClickListener(view -> drawerLayout.openDrawer(GravityCompat.START));
+
         fabAdd.setOnClickListener(view -> {
             Dialog dialog = new Dialog(this);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -69,19 +105,15 @@ public class MainActivity extends AppCompatActivity {
             Button btAdd = dialog.findViewById(R.id.bt_add);
 
             btAdd.setOnClickListener(view12 -> {
-                String name = etName.getText().toString();
-                String phone = etPhone.getText().toString();
-                String address = etAddress.getText().toString();
-                String email = etEmail.getText().toString();
+                String name = etName.getText().toString().trim();
+                String phone = etPhone.getText().toString().trim();
+                String address = etAddress.getText().toString().trim();
+                String email = etEmail.getText().toString().trim();
 
                 if(name.isEmpty() || phone.isEmpty() || address.isEmpty() || email.isEmpty()){
                     Toast.makeText(MainActivity.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
                 } else {
-                    Contact contact = new Contact();
-                    contact.setName(name);
-                    contact.setPhone(phone);
-                    contact.setAddress(address);
-                    contact.setEmail(email);
+                    Contact contact = new Contact(name, phone, address, email, DEFAULT_CONTACT_AVATAR, DEFAULT_CONTACT_BACKGROUND, DEFAULT_CONTACT_FAVOURITE);
 
                     boolean isAdded = false;
                     int i;
@@ -99,16 +131,16 @@ public class MainActivity extends AppCompatActivity {
                         viewModel.getContacts().getValue().add(contact);
                     }
 
+                    viewModel.insert(contact);
                     adapter.notifyDataSetChanged();
                     rvContacts.smoothScrollToPosition(i);
                     curHighlightIndex = i;
                     new Handler().postDelayed(() -> {
                         if(rvLayout.findViewByPosition(curHighlightIndex) != null){
-                        rvLayout.findViewByPosition(curHighlightIndex).setBackgroundColor(highlightColor);
-                        curHighlightIndex  = -1;
-                    }
+                            rvLayout.findViewByPosition(curHighlightIndex).setBackgroundColor(highlightColor);
+                            curHighlightIndex  = -1;
+                        }
                     }, 500);
-
 
                     dialog.cancel();
                 }
@@ -168,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void mapComponents() {
-        viewModel = new ViewModelProvider(this).get(MyViewModel.class);
+        viewModel = ViewModelProviders.of(MainActivity.this).get(MyViewModel.class);
         contacts = new ArrayList<>(viewModel.getContacts().getValue());
 
         svName = findViewById(R.id.sv_name);
@@ -178,5 +210,28 @@ public class MainActivity extends AppCompatActivity {
         rvContacts.setLayoutManager(rvLayout);
         adapter = new MyAdapter(contacts);
         rvContacts.setAdapter(adapter);
+
+        ivMenu = findViewById(R.id.iv_menu);
+        navigationView = findViewById(R.id.navigation_view);
+        navigationView.setItemIconTintList(null);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+        switch (itemId){
+            case R.id.item_home:
+                drawerLayout.closeDrawer(GravityCompat.START);
+                break;
+            case R.id.item_personal:
+
+                break;
+            case R.id.item_assistance:
+                break;
+            case R.id.item_version:
+                break;
+        }
+
+        return false;
     }
 }

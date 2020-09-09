@@ -13,10 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
-    private List<Contact> accountNames;
+    private List<Contact> contacts;
 
-    public MyAdapter(List<Contact> accountNames) {
-        this.accountNames = accountNames;
+    public MyAdapter(List<Contact> contacts) {
+        this.contacts = contacts;
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -29,18 +29,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             this.view = itemView;
             this.context = context;
             tvAcc = this.view.findViewById(R.id.tv_name);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int pos = getLayoutPosition();
-                    Intent intent = new Intent(context, DetailContact.class);
-                    intent.putExtra("name", accountNames.get(pos).getName());
-                    intent.putExtra("phone", accountNames.get(pos).getPhone());
-                    intent.putExtra("address", accountNames.get(pos).getAddress());
-                    intent.putExtra("email", accountNames.get(pos).getEmail());
+            itemView.setOnClickListener(view -> {
+                int pos = getLayoutPosition();
+                Intent intent = new Intent(context, DetailContact.class);
+                intent.putExtra("contact", contacts.get(pos));
 
-                    context.startActivity(intent);
-                }
+                context.startActivity(intent);
             });
         }
     }
@@ -56,12 +50,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        holder.tvAcc.setText(accountNames.get(position).getName());
+        holder.tvAcc.setText(contacts.get(position).getName());
     }
 
     @Override
     public int getItemCount() {
-        return accountNames.size();
+        return contacts.size();
     }
 
     @Override

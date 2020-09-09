@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ImageButton;
@@ -24,6 +25,8 @@ public class DetailContact extends AppCompatActivity {
     private ImageButton btCall;
     private ImageButton btMess;
     private ImageButton btEmail;
+    private ImageView ivAvatar;
+    private ImageView ivBackground;
 
     private Intent intent;
     @Override
@@ -36,16 +39,16 @@ public class DetailContact extends AppCompatActivity {
 
         intent = getIntent();
         if(intent != null){
-            curContact = new Contact();
-            curContact.setName(intent.getStringExtra("name"));
-            curContact.setPhone(intent.getStringExtra("phone"));
-            curContact.setAddress(intent.getStringExtra("address"));
-            curContact.setEmail(intent.getStringExtra("email"));
+            curContact = (Contact) intent.getSerializableExtra("contact");
 
             tvName.setText(curContact.getName());
             tvPhone.setText("SĐT: " + curContact.getPhone());
             tvAddress.setText("Địa chỉ: " + curContact.getAddress());
             tvEmail.setText("Email: " + curContact.getEmail());
+        }
+
+        if(curContact.isFavourite()){
+            ivFavorite.setColorFilter(Color.argb(255, 255, 0, 0));
         }
     }
 
@@ -93,5 +96,7 @@ public class DetailContact extends AppCompatActivity {
         btCall = findViewById(R.id.bt_call);
         btMess = findViewById(R.id.bt_text);
         btEmail = findViewById(R.id.bt_email);
+        ivAvatar = findViewById(R.id.iv_avatar);
+        ivBackground = findViewById(R.id.iv_background);
     }
 }
