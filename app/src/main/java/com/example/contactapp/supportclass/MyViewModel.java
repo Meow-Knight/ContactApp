@@ -19,10 +19,13 @@ public class MyViewModel extends AndroidViewModel {
     private final String DEFAULT_CONTACT_AVATAR = "ic_baseline_person_24";
     private final String DEFAULT_CONTACT_BACKGROUND = "default_contact_background";
     private MutableLiveData<List<Contact>> contactData;
+    private MutableLiveData<List<Contact>> favouriteContacts;
+
     private Application application;
 
     private ContactDatabase contactDatabase;
     private ContactDao contactDao;
+    List<Contact> dbContacts = new ArrayList<>();
 
     public MyViewModel(Application application) {
         super(application);
@@ -37,6 +40,31 @@ public class MyViewModel extends AndroidViewModel {
             initialContacts();
         }
         return contactData;
+    }
+
+    public LiveData<List<Contact>> getFavouriteContacts(){
+        if(favouriteContacts == null){
+            initialFavouriteContacts();
+        }
+        return favouriteContacts;
+    }
+
+    private void initialFavouriteContacts() {
+        favouriteContacts = new MutableLiveData<>();
+        List<Contact> tmp = new ArrayList<>();
+
+        AsyncTask.execute(() -> {
+            contactDatabase = ContactDatabase.getInstance(application.getApplicationContext());
+            contactDao = contactDatabase.contactDao();
+            dbContacts = contactDao.getFavouriteContacts();
+
+            for (Contact contact : dbContacts){
+                tmp.add(contact);
+            }
+            Collections.sort(tmp, (contact, t1) -> contact.getFirstName().compareToIgnoreCase(t1.getFirstName()));
+        });
+
+        favouriteContacts.setValue(tmp);
     }
 
     public void insert(Contact contact){
@@ -57,7 +85,6 @@ public class MyViewModel extends AndroidViewModel {
         }
     }
 
-    List<Contact> dbContacts = new ArrayList<>();
     private void initialContacts() {
         List<Contact> tmp = new ArrayList<>();
 
@@ -94,9 +121,6 @@ public class MyViewModel extends AndroidViewModel {
             Collections.sort(tmp, (contact, t1) -> contact.getFirstName().compareToIgnoreCase(t1.getFirstName()));
         });
 
-        for (Contact contact : tmp){
-            System.out.println(contact);
-        }
         contactData.setValue(tmp);
     }
 }

@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -42,11 +43,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private NavigationView navigationView;
     private LinearLayoutManagerWithSmoothScroller rvLayout;
 
-    private TextView tvTitle;
     private SearchView svName;
     private List<Contact> contacts;
     private RecyclerView rvContacts;
-    private MyAdapter adapter;
+    private MyAdapter allContactAdapter;
+    private MyAdapter favouriteContactAdapter;
     private MyViewModel viewModel;
     private FloatingActionButton fabAdd;
     private FloatingActionButton fabMoreAction;
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private final int normalColor = Color.WHITE;
     private final int animationTime = 400;
     private boolean isOpenedMoreAction = false;
+    private boolean isShowingFavouriteContacts = false;
 
     // Default Value
     private final String DEFAULT_CONTACT_AVATAR = "ic_baseline_person_24";
@@ -73,58 +75,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mapComponents();
         initialEvents();
 
-        viewModel.getContacts().observe(this, integer -> {
-            contacts.clear();
-            for(Contact x : viewModel.getContacts().getValue()){
-                contacts.add(x);
-            }
-            adapter.notifyDataSetChanged();
-        });
-
     }
 
     private void initialEvents() {
         ivMenu.setOnClickListener(view -> drawerLayout.openDrawer(GravityCompat.START));
 
+        fabFavourite.setOnClickListener(view -> {
+            closeAnimation();
+            rvContacts.setAdapter(favouriteContactAdapter);
+            isShowingFavouriteContacts = true;
+        });
+
         fabMoreAction.setOnClickListener(view -> {
-            if(isOpenedMoreAction){
-                Animation closeMoreActionAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_zoomout_close_anim);
-                closeMoreActionAnimation.setDuration(animationTime);
-                fabMoreAction.startAnimation(closeMoreActionAnimation);
-
-                Animation closeAddAnimation = AnimationUtils.loadAnimation(this, R.anim.float_diagonal_down);
-                closeAddAnimation.setDuration(animationTime);
-                fabAdd.startAnimation(closeAddAnimation);
-
-                Animation closeFavouriteAnimation = AnimationUtils.loadAnimation(this, R.anim.float_down);
-                closeFavouriteAnimation.setDuration(animationTime);
-                fabFavourite.startAnimation(closeFavouriteAnimation);
-
-                Animation closeDeleteAnimation = AnimationUtils.loadAnimation(this, R.anim.float_to_right);
-                closeDeleteAnimation.setDuration(animationTime);
-                fabDeleteContact.startAnimation(closeDeleteAnimation);
-            } else {
-                Animation openMoreActionAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_zoomin_open_anim);
-                openMoreActionAnimation.setDuration(animationTime);
-                fabMoreAction.startAnimation(openMoreActionAnimation);
-
-                Animation openAddAnimation = AnimationUtils.loadAnimation(this, R.anim.float_diagonal_up);
-                openAddAnimation.setDuration(animationTime);
-                fabAdd.startAnimation(openAddAnimation);
-
-                Animation openFavouriteAnimation = AnimationUtils.loadAnimation(this, R.anim.float_up);
-                openFavouriteAnimation.setDuration(animationTime);
-                fabFavourite.startAnimation(openFavouriteAnimation);
-
-                Animation openDeleteAnimation = AnimationUtils.loadAnimation(this, R.anim.float_to_left);
-                openDeleteAnimation.setDuration(animationTime);
-                fabDeleteContact.startAnimation(openDeleteAnimation);
+            if(isShowingFavouriteContacts){
+                rvContacts.setAdapter(allContactAdapter);
+                isShowingFavouriteContacts = false;
             }
 
-            isOpenedMoreAction = !isOpenedMoreAction;
+            if(isOpenedMoreAction){
+                closeAnimation();
+            } else {
+                openAnimation();
+            }
         });
 
         fabAdd.setOnClickListener(view -> {
+            closeAnimation();
             Dialog dialog = new Dialog(this);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             dialog.setContentView(R.layout.add_contact);
@@ -163,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
 
                     viewModel.insert(contact);
-                    adapter.notifyDataSetChanged();
+                    allContactAdapter.notifyDataSetChanged();
                     rvContacts.smoothScrollToPosition(i);
                     curHighlightIndex = i;
                     new Handler().postDelayed(() -> {
@@ -232,11 +208,59 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this::onNavigationItemSelected);
     }
 
+    private void openAnimation() {
+        fabAdd.setVisibility(View.VISIBLE);
+        fabFavourite.setVisibility(View.VISIBLE);
+        fabDeleteContact.setVisibility(View.VISIBLE);
+
+        Animation openMoreActionAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_zoomin_open_anim);
+        openMoreActionAnimation.setDuration(animationTime);
+        fabMoreAction.startAnimation(openMoreActionAnimation);
+
+        Animation openAddAnimation = AnimationUtils.loadAnimation(this, R.anim.float_diagonal_up);
+        openAddAnimation.setDuration(animationTime);
+        fabAdd.startAnimation(openAddAnimation);
+
+        Animation openFavouriteAnimation = AnimationUtils.loadAnimation(this, R.anim.float_up);
+        openFavouriteAnimation.setDuration(animationTime);
+        fabFavourite.startAnimation(openFavouriteAnimation);
+
+        Animation openDeleteAnimation = AnimationUtils.loadAnimation(this, R.anim.float_to_left);
+        openDeleteAnimation.setDuration(animationTime);
+        fabDeleteContact.startAnimation(openDeleteAnimation);
+
+        isOpenedMoreAction = !isOpenedMoreAction;
+    }
+
+    private void closeAnimation() {
+        Animation closeMoreActionAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_zoomout_close_anim);
+        closeMoreActionAnimation.setDuration(animationTime);
+        fabMoreAction.startAnimation(closeMoreActionAnimation);
+
+        Animation closeAddAnimation = AnimationUtils.loadAnimation(this, R.anim.float_diagonal_down);
+        closeAddAnimation.setDuration(animationTime);
+        fabAdd.startAnimation(closeAddAnimation);
+
+        Animation closeFavouriteAnimation = AnimationUtils.loadAnimation(this, R.anim.float_down);
+        closeFavouriteAnimation.setDuration(animationTime);
+        fabFavourite.startAnimation(closeFavouriteAnimation);
+
+
+        Animation closeDeleteAnimation = AnimationUtils.loadAnimation(this, R.anim.float_to_right);
+        closeDeleteAnimation.setDuration(animationTime);
+        fabDeleteContact.startAnimation(closeDeleteAnimation);
+
+        isOpenedMoreAction = !isOpenedMoreAction;
+
+        fabAdd.setVisibility(View.GONE);
+        fabFavourite.setVisibility(View.GONE);
+        fabDeleteContact.setVisibility(View.GONE);
+    }
+
     private void mapComponents() {
         viewModel = ViewModelProviders.of(MainActivity.this).get(MyViewModel.class);
         contacts = viewModel.getContacts().getValue();
 
-        tvTitle = findViewById(R.id.tv_title);
         svName = findViewById(R.id.sv_name);
         rvContacts = findViewById(R.id.rv_contacts);
         fabAdd = findViewById(R.id.fab_add);
@@ -245,8 +269,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fabDeleteContact = findViewById(R.id.fab_delete_contact);
         rvLayout = new LinearLayoutManagerWithSmoothScroller(this);
         rvContacts.setLayoutManager(rvLayout);
-        adapter = new MyAdapter(contacts);
-        rvContacts.setAdapter(adapter);
+        allContactAdapter = new MyAdapter(contacts);
+        favouriteContactAdapter = new MyAdapter(viewModel.getFavouriteContacts().getValue());
+        rvContacts.setAdapter(allContactAdapter);
 
         ivMenu = findViewById(R.id.iv_menu);
         navigationView = findViewById(R.id.navigation_view);

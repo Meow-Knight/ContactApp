@@ -19,4 +19,7 @@ public interface ContactDao {
 
     @Delete
     void delete(Contact contact);
+
+    @Query("SELECT * FROM contact WHERE isFavourite = 1")
+    List<Contact> getFavouriteContacts();
 }
