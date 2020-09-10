@@ -1,4 +1,4 @@
-package com.example.contactapp;
+package com.example.contactapp.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -14,7 +14,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class DetailContact extends AppCompatActivity {
+import com.example.contactapp.R;
+import com.example.contactapp.entities.Contact;
+
+public class DetailContactActivity extends AppCompatActivity {
     private Contact curContact;
     private TextView tvName;
     private TextView tvPhone;

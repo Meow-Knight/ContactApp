@@ -1,4 +1,4 @@
-package com.example.contactapp;
+package com.example.contactapp.entities;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;

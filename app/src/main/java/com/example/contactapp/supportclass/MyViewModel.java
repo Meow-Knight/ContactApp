@@ -1,4 +1,4 @@
-package com.example.contactapp;
+package com.example.contactapp.supportclass;
 
 import android.app.Application;
 import android.os.AsyncTask;
@@ -6,6 +6,10 @@ import android.os.AsyncTask;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+
+import com.example.contactapp.dao.ContactDao;
+import com.example.contactapp.dao.ContactDatabase;
+import com.example.contactapp.entities.Contact;
 
 import java.util.ArrayList;
 import java.util.Collections;

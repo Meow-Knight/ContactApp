@@ -1,4 +1,4 @@
-package com.example.contactapp;
+package com.example.contactapp.view;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,13 +7,12 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,6 +21,13 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.contactapp.dao.ContactDatabase;
+import com.example.contactapp.supportclass.LinearLayoutManagerWithSmoothScroller;
+import com.example.contactapp.supportclass.MyAdapter;
+import com.example.contactapp.supportclass.MyViewModel;
+import com.example.contactapp.R;
+import com.example.contactapp.dao.ContactDao;
+import com.example.contactapp.entities.Contact;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
@@ -46,10 +52,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private int curHighlightIndex = -1;
     private final int highlightColor = Color.LTGRAY;
     private final int normalColor = Color.WHITE;
-
-    // Database
-    private ContactDatabase database;
-    private ContactDao contactDao;
 
     // Default Value
     private final String DEFAULT_CONTACT_AVATAR = "ic_baseline_person_24";
@@ -183,6 +185,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             return false;
         });
 
+        navigationView.setNavigationItemSelectedListener(this::onNavigationItemSelected);
     }
 
     private void mapComponents() {
@@ -211,7 +214,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 drawerLayout.closeDrawer(GravityCompat.START);
                 break;
             case R.id.item_personal:
-
+                Intent intent = new Intent(MainActivity.this, MyAccountInformationActivity.class);
+                startActivity(intent);
                 break;
             case R.id.item_assistance:
                 break;

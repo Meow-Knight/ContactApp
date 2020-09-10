@@ -1,4 +1,4 @@
-package com.example.contactapp;
+package com.example.contactapp.supportclass;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +9,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.contactapp.R;
+import com.example.contactapp.entities.Contact;
+import com.example.contactapp.view.DetailContactActivity;
 
 import java.util.List;
 
@@ -31,7 +35,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             tvAcc = this.view.findViewById(R.id.tv_name);
             itemView.setOnClickListener(view -> {
                 int pos = getLayoutPosition();
-                Intent intent = new Intent(context, DetailContact.class);
+                Intent intent = new Intent(context, DetailContactActivity.class);
                 intent.putExtra("contact", contacts.get(pos));
 
                 context.startActivity(intent);

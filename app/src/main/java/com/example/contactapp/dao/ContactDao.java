@@ -1,9 +1,11 @@
-package com.example.contactapp;
+package com.example.contactapp.dao;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+
+import com.example.contactapp.entities.Contact;
 
 import java.util.List;
 

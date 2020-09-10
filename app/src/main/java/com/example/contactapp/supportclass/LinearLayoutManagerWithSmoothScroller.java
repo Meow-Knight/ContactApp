@@ -1,4 +1,4 @@
-package com.example.contactapp;
+package com.example.contactapp.supportclass;
 
 import android.content.Context;
 import android.graphics.PointF;
