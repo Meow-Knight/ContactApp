@@ -13,15 +13,45 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_add"
-            android:layout_width="59dp"
-            android:layout_height="61dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:clickable="true"
+            app:srcCompat="@drawable/ic_baseline_person_add_24"
+            app:layout_constraintBottom_toBottomOf="@id/fab_more_action"
+            app:layout_constraintEnd_toEndOf="@id/fab_more_action"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_delete_contact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            app:srcCompat="@drawable/ic_baseline_delete_24"
+            app:layout_constraintEnd_toEndOf="@+id/fab_more_action"
+            app:layout_constraintBottom_toBottomOf="@+id/fab_more_action"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_favourite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            app:layout_constraintBottom_toBottomOf="@+id/fab_more_action"
+            app:layout_constraintEnd_toEndOf="@+id/fab_more_action"
+            app:srcCompat="@drawable/ic_baseline_fab_favorite_24" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_more_action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:foreground="?attr/selectableItemBackground"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@drawable/ic_baseline_person_add_24"
-            tools:ignore="VectorDrawableCompat"
-            android:foreground="?attr/selectableItemBackground"
-            android:background="?android:attr/selectableItemBackground"/>
+            app:srcCompat="@drawable/ic_baseline_keyboard_arrow_up_24"
+            tools:ignore="VectorDrawableCompat" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -70,6 +100,7 @@
                 android:id="@+id/rv_contacts"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
+
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

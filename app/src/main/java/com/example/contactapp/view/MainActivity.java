@@ -7,6 +7,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.animation.ObjectAnimator;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,6 +15,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -21,12 +24,10 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.contactapp.dao.ContactDatabase;
 import com.example.contactapp.supportclass.LinearLayoutManagerWithSmoothScroller;
 import com.example.contactapp.supportclass.MyAdapter;
 import com.example.contactapp.supportclass.MyViewModel;
 import com.example.contactapp.R;
-import com.example.contactapp.dao.ContactDao;
 import com.example.contactapp.entities.Contact;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawerLayout;
     private ImageView ivMenu;
     private NavigationView navigationView;
+    private LinearLayoutManagerWithSmoothScroller rvLayout;
 
     private TextView tvTitle;
     private SearchView svName;
@@ -47,11 +49,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private MyAdapter adapter;
     private MyViewModel viewModel;
     private FloatingActionButton fabAdd;
-    private LinearLayoutManagerWithSmoothScroller rvLayout;
+    private FloatingActionButton fabMoreAction;
+    private FloatingActionButton fabFavourite;
+    private FloatingActionButton fabDeleteContact;
 
     private int curHighlightIndex = -1;
     private final int highlightColor = Color.LTGRAY;
     private final int normalColor = Color.WHITE;
+    private final int animationTime = 400;
+    private boolean isOpenedMoreAction = false;
 
     // Default Value
     private final String DEFAULT_CONTACT_AVATAR = "ic_baseline_person_24";
@@ -79,6 +85,44 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void initialEvents() {
         ivMenu.setOnClickListener(view -> drawerLayout.openDrawer(GravityCompat.START));
+
+        fabMoreAction.setOnClickListener(view -> {
+            if(isOpenedMoreAction){
+                Animation closeMoreActionAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_zoomout_close_anim);
+                closeMoreActionAnimation.setDuration(animationTime);
+                fabMoreAction.startAnimation(closeMoreActionAnimation);
+
+                Animation closeAddAnimation = AnimationUtils.loadAnimation(this, R.anim.float_diagonal_down);
+                closeAddAnimation.setDuration(animationTime);
+                fabAdd.startAnimation(closeAddAnimation);
+
+                Animation closeFavouriteAnimation = AnimationUtils.loadAnimation(this, R.anim.float_down);
+                closeFavouriteAnimation.setDuration(animationTime);
+                fabFavourite.startAnimation(closeFavouriteAnimation);
+
+                Animation closeDeleteAnimation = AnimationUtils.loadAnimation(this, R.anim.float_to_right);
+                closeDeleteAnimation.setDuration(animationTime);
+                fabDeleteContact.startAnimation(closeDeleteAnimation);
+            } else {
+                Animation openMoreActionAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_zoomin_open_anim);
+                openMoreActionAnimation.setDuration(animationTime);
+                fabMoreAction.startAnimation(openMoreActionAnimation);
+
+                Animation openAddAnimation = AnimationUtils.loadAnimation(this, R.anim.float_diagonal_up);
+                openAddAnimation.setDuration(animationTime);
+                fabAdd.startAnimation(openAddAnimation);
+
+                Animation openFavouriteAnimation = AnimationUtils.loadAnimation(this, R.anim.float_up);
+                openFavouriteAnimation.setDuration(animationTime);
+                fabFavourite.startAnimation(openFavouriteAnimation);
+
+                Animation openDeleteAnimation = AnimationUtils.loadAnimation(this, R.anim.float_to_left);
+                openDeleteAnimation.setDuration(animationTime);
+                fabDeleteContact.startAnimation(openDeleteAnimation);
+            }
+
+            isOpenedMoreAction = !isOpenedMoreAction;
+        });
 
         fabAdd.setOnClickListener(view -> {
             Dialog dialog = new Dialog(this);
@@ -196,6 +240,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         svName = findViewById(R.id.sv_name);
         rvContacts = findViewById(R.id.rv_contacts);
         fabAdd = findViewById(R.id.fab_add);
+        fabMoreAction = findViewById(R.id.fab_more_action);
+        fabFavourite = findViewById(R.id.fab_favourite);
+        fabDeleteContact = findViewById(R.id.fab_delete_contact);
         rvLayout = new LinearLayoutManagerWithSmoothScroller(this);
         rvContacts.setLayoutManager(rvLayout);
         adapter = new MyAdapter(contacts);
