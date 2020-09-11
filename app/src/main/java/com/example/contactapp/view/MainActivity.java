@@ -2,15 +2,19 @@ package com.example.contactapp.view;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.animation.ObjectAnimator;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
@@ -22,7 +26,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SearchView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.contactapp.supportclass.LinearLayoutManagerWithSmoothScroller;
@@ -60,11 +63,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private final int animationTime = 400;
     private boolean isOpenedMoreAction = false;
     private boolean isShowingFavouriteContacts = false;
+    private boolean isOnDeleteMode = false;
+    private boolean isShowingAddContactMode = false;
 
     // Default Value
     private final String DEFAULT_CONTACT_AVATAR = "ic_baseline_person_24";
     private final String DEFAULT_CONTACT_BACKGROUND = "default_contact_background";
     private final boolean DEFAULT_CONTACT_FAVOURITE = false;
+    private final int DEFAULT_MOREACTION_BUTTON_COLOR = Color.argb(255, 55, 0, 179);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,30 +83,105 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    private void setBackgroundColorForMoreActionButton(int resourceColor){
+        int color = ContextCompat.getColor(this, resourceColor);
+        fabMoreAction.getDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
+    }
+
     private void initialEvents() {
         ivMenu.setOnClickListener(view -> drawerLayout.openDrawer(GravityCompat.START));
 
         fabFavourite.setOnClickListener(view -> {
-            closeAnimation();
+            // if delete add contact button haven't close yet -> close it and favorite button
+            if(fabAdd.getVisibility() == View.VISIBLE){
+                closeAnimation(false, true, false, true);
+            }
+
+            fabMoreAction.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
+
             rvContacts.setAdapter(favouriteContactAdapter);
             isShowingFavouriteContacts = true;
         });
 
-        fabMoreAction.setOnClickListener(view -> {
-            if(isShowingFavouriteContacts){
-                rvContacts.setAdapter(allContactAdapter);
-                isShowingFavouriteContacts = false;
-            }
+        fabDeleteContact.setOnClickListener(view -> {
+            // if user click on this button in second time, it will delete marked contacts
 
-            if(isOpenedMoreAction){
-                closeAnimation();
+            if(isOnDeleteMode){
+                DialogInterface.OnClickListener dialogClickListener = (dialogInterface, i) -> {
+                    switch (i){
+                        case DialogInterface.BUTTON_POSITIVE:
+                            List<Integer> deleteContactIndexes = allContactAdapter.getDeleteContactIndexes();
+                            viewModel.deleteContacts(deleteContactIndexes);
+                            allContactAdapter.notifyDataSetChanged();
+                            deleteContactIndexes.clear();
+                            break;
+                        case  DialogInterface.BUTTON_NEGATIVE:
+                    }
+                };
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                alertDialogBuilder.setMessage("Xóa những liên hệ này?")
+                        .setPositiveButton("Đồng ý", dialogClickListener)
+                        .setNegativeButton("Hủy", dialogClickListener)
+                        .show();
             } else {
-                openAnimation();
+            // if delete add contact button haven't close yet -> close it and favorite button
+                if(fabAdd.getVisibility() == View.VISIBLE) {
+                    fabMoreAction.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
+                    closeAnimation(false, true, true, false);
+                }
+
+                Toast.makeText(MainActivity.this, "Chọn các liên hệ bạn muốn xóa", Toast.LENGTH_SHORT).show();
+                isOnDeleteMode = true;
+                allContactAdapter.setOnDeleteMode(isOnDeleteMode);
             }
         });
 
+        fabMoreAction.setOnClickListener(view -> {
+//            setBackgroundColorForMoreActionButton(getApplicationContext(), R.color.white);
+
+            fabMoreAction.setBackgroundTintList(ColorStateList.valueOf(DEFAULT_MOREACTION_BUTTON_COLOR));
+
+            if(isShowingFavouriteContacts){
+                rvContacts.setAdapter(allContactAdapter);
+                closeAnimation(true, false, true, false);
+                isShowingFavouriteContacts = false;
+                isOpenedMoreAction = !isOpenedMoreAction;
+                return;
+            }
+
+            if (isOnDeleteMode){
+                closeAnimation(true, false, false, true);
+                isOnDeleteMode = false;
+                allContactAdapter.setOnDeleteMode(isOnDeleteMode);
+                isOpenedMoreAction = !isOpenedMoreAction;
+                return;
+            }
+
+            if(isShowingAddContactMode){
+                closeAnimation(true, true, false, false);
+                isShowingAddContactMode = false;
+                isOpenedMoreAction = !isOpenedMoreAction;
+                return;
+            }
+
+            if(isOpenedMoreAction){
+                closeAnimation(true, true, true, true);
+            } else{
+                openAnimation(true, true, true, true);
+            }
+            isOpenedMoreAction = !isOpenedMoreAction;
+        });
+
         fabAdd.setOnClickListener(view -> {
-            closeAnimation();
+            isShowingAddContactMode = true;
+            fabMoreAction.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
+
+            // if delete contact button haven't close yet -> close it and favorite button
+            if(fabDeleteContact.getVisibility() == View.VISIBLE){
+                closeAnimation(false, false, true, true);
+            }
+
             Dialog dialog = new Dialog(this);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             dialog.setContentView(R.layout.add_contact);
@@ -159,11 +240,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         rvContacts.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                for(int j = rvLayout.findFirstVisibleItemPosition(); j <= rvLayout.findLastVisibleItemPosition(); j++){
-                    Objects.requireNonNull(rvLayout.findViewByPosition(j)).setBackgroundColor(normalColor);
-                }
-                if(curHighlightIndex != -1 && rvLayout.findViewByPosition(curHighlightIndex) != null){
-                    Objects.requireNonNull(rvLayout.findViewByPosition(curHighlightIndex)).setBackgroundColor(highlightColor);
+                if(!isOnDeleteMode){
+                    for(int j = rvLayout.findFirstVisibleItemPosition(); j <= rvLayout.findLastVisibleItemPosition(); j++){
+                        Objects.requireNonNull(rvLayout.findViewByPosition(j)).setBackgroundColor(normalColor);
+                    }
+                    if(curHighlightIndex != -1 && rvLayout.findViewByPosition(curHighlightIndex) != null){
+                        Objects.requireNonNull(rvLayout.findViewByPosition(curHighlightIndex)).setBackgroundColor(highlightColor);
+                    }
                 }
             }
         });
@@ -205,56 +288,73 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             return false;
         });
 
-        navigationView.setNavigationItemSelectedListener(this::onNavigationItemSelected);
+        navigationView.setNavigationItemSelectedListener(this);
     }
 
-    private void openAnimation() {
-        fabAdd.setVisibility(View.VISIBLE);
-        fabFavourite.setVisibility(View.VISIBLE);
-        fabDeleteContact.setVisibility(View.VISIBLE);
+    private void openAnimation(boolean isOpenMoreActionButton,
+                               boolean isOpenAddContactButton,
+                               boolean isOpenFavouriteContactButton,
+                               boolean isOpenDeleteContactButton) {
 
-        Animation openMoreActionAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_zoomin_open_anim);
-        openMoreActionAnimation.setDuration(animationTime);
-        fabMoreAction.startAnimation(openMoreActionAnimation);
+        if(isOpenMoreActionButton){
+            Animation openMoreActionAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_zoomin_open_anim);
+            openMoreActionAnimation.setDuration(animationTime);
+            fabMoreAction.startAnimation(openMoreActionAnimation);
+        }
 
-        Animation openAddAnimation = AnimationUtils.loadAnimation(this, R.anim.float_diagonal_up);
-        openAddAnimation.setDuration(animationTime);
-        fabAdd.startAnimation(openAddAnimation);
+        if (isOpenAddContactButton){
+            fabAdd.setVisibility(View.VISIBLE);
+            Animation openAddAnimation = AnimationUtils.loadAnimation(this, R.anim.float_diagonal_up);
+            openAddAnimation.setDuration(animationTime);
+            fabAdd.startAnimation(openAddAnimation);
+        }
 
-        Animation openFavouriteAnimation = AnimationUtils.loadAnimation(this, R.anim.float_up);
-        openFavouriteAnimation.setDuration(animationTime);
-        fabFavourite.startAnimation(openFavouriteAnimation);
+        if(isOpenFavouriteContactButton){
+            fabFavourite.setVisibility(View.VISIBLE);
+            Animation openFavouriteAnimation = AnimationUtils.loadAnimation(this, R.anim.float_up);
+            openFavouriteAnimation.setDuration(animationTime);
+            fabFavourite.startAnimation(openFavouriteAnimation);
+        }
 
-        Animation openDeleteAnimation = AnimationUtils.loadAnimation(this, R.anim.float_to_left);
-        openDeleteAnimation.setDuration(animationTime);
-        fabDeleteContact.startAnimation(openDeleteAnimation);
-
-        isOpenedMoreAction = !isOpenedMoreAction;
+        if(isOpenDeleteContactButton){
+            fabDeleteContact.setVisibility(View.VISIBLE);
+            Animation openDeleteAnimation = AnimationUtils.loadAnimation(this, R.anim.float_to_left);
+            openDeleteAnimation.setDuration(animationTime);
+            fabDeleteContact.startAnimation(openDeleteAnimation);
+        }
     }
 
-    private void closeAnimation() {
-        Animation closeMoreActionAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_zoomout_close_anim);
-        closeMoreActionAnimation.setDuration(animationTime);
-        fabMoreAction.startAnimation(closeMoreActionAnimation);
+    private void closeAnimation(boolean isCloseMoreActionButton,
+                                boolean isCloseAddContactButton,
+                                boolean isCloseFavouriteContactButton,
+                                boolean isCloseDeleteContactButton) {
 
-        Animation closeAddAnimation = AnimationUtils.loadAnimation(this, R.anim.float_diagonal_down);
-        closeAddAnimation.setDuration(animationTime);
-        fabAdd.startAnimation(closeAddAnimation);
+        if(isCloseMoreActionButton){
+            Animation closeMoreActionAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_zoomout_close_anim);
+            closeMoreActionAnimation.setDuration(animationTime);
+            fabMoreAction.startAnimation(closeMoreActionAnimation);
+        }
 
-        Animation closeFavouriteAnimation = AnimationUtils.loadAnimation(this, R.anim.float_down);
-        closeFavouriteAnimation.setDuration(animationTime);
-        fabFavourite.startAnimation(closeFavouriteAnimation);
+        if(isCloseAddContactButton){
+            Animation closeAddAnimation = AnimationUtils.loadAnimation(this, R.anim.float_diagonal_down);
+            closeAddAnimation.setDuration(animationTime);
+            fabAdd.startAnimation(closeAddAnimation);
+            fabAdd.setVisibility(View.GONE);
+        }
 
+        if (isCloseFavouriteContactButton){
+            Animation closeFavouriteAnimation = AnimationUtils.loadAnimation(this, R.anim.float_down);
+            closeFavouriteAnimation.setDuration(animationTime);
+            fabFavourite.startAnimation(closeFavouriteAnimation);
+            fabFavourite.setVisibility(View.GONE);
+        }
 
-        Animation closeDeleteAnimation = AnimationUtils.loadAnimation(this, R.anim.float_to_right);
-        closeDeleteAnimation.setDuration(animationTime);
-        fabDeleteContact.startAnimation(closeDeleteAnimation);
-
-        isOpenedMoreAction = !isOpenedMoreAction;
-
-        fabAdd.setVisibility(View.GONE);
-        fabFavourite.setVisibility(View.GONE);
-        fabDeleteContact.setVisibility(View.GONE);
+        if(isCloseDeleteContactButton){
+            Animation closeDeleteAnimation = AnimationUtils.loadAnimation(this, R.anim.float_to_right);
+            closeDeleteAnimation.setDuration(animationTime);
+            fabDeleteContact.startAnimation(closeDeleteAnimation);
+            fabDeleteContact.setVisibility(View.GONE);
+        }
     }
 
     private void mapComponents() {
@@ -276,6 +376,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ivMenu = findViewById(R.id.iv_menu);
         navigationView = findViewById(R.id.navigation_view);
         navigationView.setItemIconTintList(null);
+
+        // default display
+        fabMoreAction.setBackgroundTintList(ColorStateList.valueOf(DEFAULT_MOREACTION_BUTTON_COLOR));
     }
 
     @Override

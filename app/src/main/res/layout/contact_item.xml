@@ -8,7 +8,8 @@
     app:cardElevation="10dp"
     app:cardCornerRadius="10dp"
     android:foreground="?android:attr/selectableItemBackground"
-    android:clickable="true">
+    android:clickable="true"
+    android:id="@+id/cv_item">
 
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"

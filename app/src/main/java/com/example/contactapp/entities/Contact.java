@@ -5,6 +5,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity (tableName = "contact")
 public class Contact implements Serializable {
@@ -126,5 +127,18 @@ public class Contact implements Serializable {
         name = name.trim();
         String[] s = name.split("[\\s]+");
         return s[s.length - 1];
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Contact contact = (Contact) o;
+        return id == contact.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.id;
     }
 }

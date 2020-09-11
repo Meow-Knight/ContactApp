@@ -1,6 +1,7 @@
 package com.example.contactapp.supportclass;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.AsyncTask;
 
 import androidx.lifecycle.AndroidViewModel;
@@ -49,6 +50,21 @@ public class MyViewModel extends AndroidViewModel {
         return favouriteContacts;
     }
 
+    public void deleteContacts(List<Integer> deleteContactIndexes){
+        Collections.sort(deleteContactIndexes);
+        Collections.reverse(deleteContactIndexes);
+        for (int index : deleteContactIndexes){
+            final Contact deleteContact = contactData.getValue().get(index);
+            AsyncTask.execute(() -> {
+                contactDatabase = ContactDatabase.getInstance(application.getApplicationContext());
+                contactDao = contactDatabase.contactDao();
+                contactDao.delete(deleteContact);
+            });
+            favouriteContacts.getValue().remove(deleteContact);
+            contactData.getValue().remove(deleteContact);
+        }
+    }
+
     private void initialFavouriteContacts() {
         favouriteContacts = new MutableLiveData<>();
         List<Contact> tmp = new ArrayList<>();
@@ -93,8 +109,8 @@ public class MyViewModel extends AndroidViewModel {
             contactDao = contactDatabase.contactDao();
             dbContacts = contactDao.getAll();
             if(dbContacts.size() == 0){
-                dbContacts.add(new Contact("Châu Thế Hân", "Đại Hiệp, Đại Lộc, Quảng Nam", "han@gmail.com", "099475237", DEFAULT_CONTACT_AVATAR, DEFAULT_CONTACT_BACKGROUND, true));
-                dbContacts.add(new Contact("Võ Hồng Pha", "Đại Hiệp, Đại Lộc, Quảng Nam", "pha@gmail.com", "093402375", DEFAULT_CONTACT_AVATAR, DEFAULT_CONTACT_BACKGROUND, false));
+                dbContacts.add(new Contact("Châu Thế Hân", "Đại Hiệp, Đại Lộc, Quảng Nam", "han@gmail.com", "099475237", "contact_avatar_1", DEFAULT_CONTACT_BACKGROUND, true));
+                dbContacts.add(new Contact("Võ Hồng Pha", "Đại Hiệp, Đại Lộc, Quảng Nam", "pha@gmail.com", "093402375", "contact_avatar_2", "contact_background_2", false));
                 dbContacts.add(new Contact("Nguyễn Lê Anh Nguyên", "Hội An, Quảng Nam", "nguyen@gmail.com", "040377457", DEFAULT_CONTACT_AVATAR, DEFAULT_CONTACT_BACKGROUND, true));
                 dbContacts.add(new Contact("Lê Ngọc Minh", "Điện Ngọc, Điện Bàn, Quảng Nam", "minh@gmail.com", "070745737", DEFAULT_CONTACT_AVATAR, DEFAULT_CONTACT_BACKGROUND, false));
                 dbContacts.add(new Contact("Nguyễn Đình Chính", "Thanh Hà, Hội An, Quảng Nam", "chinh@gmail.com", "0976870878", DEFAULT_CONTACT_AVATAR, DEFAULT_CONTACT_BACKGROUND, true));
@@ -105,10 +121,10 @@ public class MyViewModel extends AndroidViewModel {
                 dbContacts.add(new Contact("Nguyễn Duy An", "Nam Phước, Duy Xuyên, Quảng Nam", "binhlanduyan@gmail.com", "0945243973", DEFAULT_CONTACT_AVATAR, DEFAULT_CONTACT_BACKGROUND, true));
                 dbContacts.add(new Contact("Trịnh Nhật Hưng", "Quế Sơn, Quảng Nam", "hung@gmail.com", "0942357197", DEFAULT_CONTACT_AVATAR, DEFAULT_CONTACT_BACKGROUND, false));
                 dbContacts.add(new Contact("Nguyễn Thị Tiên", "Tam Kỳ, Quảng Nam", "tien@gmail.com", "0356112087", DEFAULT_CONTACT_AVATAR, DEFAULT_CONTACT_BACKGROUND, false));
-                dbContacts.add(new Contact("Nguyễn Thị Lan", "Triệu Đại, Triệu Phong, Quảng Trị", "nl@gmail.com", "0966759343", "contact_avatar_2", "contact_background_2", true));
+                dbContacts.add(new Contact("Nguyễn Thị Lan", "Triệu Đại, Triệu Phong, Quảng Trị", "nl@gmail.com", "0966759343", "contact_avatar_13", "contact_background_13", true));
                 dbContacts.add(new Contact("Phạm Hữu Hoàng", "Điện Phương, Điện Bàn, Quảng Nam", "hwang@gmail.com", "0705213385", DEFAULT_CONTACT_AVATAR, DEFAULT_CONTACT_BACKGROUND, false));
                 dbContacts.add(new Contact("Thầy Miên", "Điện Dương, Điện Ngọc, Quảng Nam", "mien@gmail.com", "0905161114", DEFAULT_CONTACT_AVATAR, DEFAULT_CONTACT_BACKGROUND, false));
-                dbContacts.add(new Contact("Lớp phó Như", "Hoa Khanh Bac, Lien Chieu, Da Nang", "nhu@gmail.com", "0949723582", DEFAULT_CONTACT_AVATAR, DEFAULT_CONTACT_BACKGROUND, false));
+                dbContacts.add(new Contact("Lớp phó Như", "Hoa Khanh Bac, Lien Chieu, Da Nang", "nhu@gmail.com", "0949723582", "contact_avatar_16", DEFAULT_CONTACT_BACKGROUND, false));
 
                 for (Contact contact : dbContacts){
                     insert(contact);
