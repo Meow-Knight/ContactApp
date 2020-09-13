@@ -1,7 +1,6 @@
 package com.example.contactapp.supportclass;
 
 import android.app.Application;
-import android.content.Context;
 import android.os.AsyncTask;
 
 import androidx.lifecycle.AndroidViewModel;

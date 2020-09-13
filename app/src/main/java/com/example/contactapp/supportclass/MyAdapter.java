@@ -68,10 +68,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
                         itemColor = ((ColorDrawable) itemDrawable).getColor();
                     }
                     if(itemColor != HIGHLIGHT_DELETE_COLOR){
-                        cardView.setBackgroundColor(HIGHLIGHT_DELETE_COLOR);
+                        cardView.setCardBackgroundColor(HIGHLIGHT_DELETE_COLOR);
                         deleteContactIndexes.add(position);
                     } else {
-                        cardView.setBackgroundColor(NORMAL_COLOR);
+                        cardView.setCardBackgroundColor(NORMAL_COLOR);
                         deleteContactIndexes.remove(position);
                     }
                 }
@@ -94,9 +94,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     public void setOnDeleteMode(boolean isOnDeleteMode){
         this.isOnDeleteMode = isOnDeleteMode;
         if(!isOnDeleteMode){
-            for(Integer index : deleteContactIndexes){
-                System.out.println(index + "))))");
-                cardViews.get(index).setBackgroundColor(NORMAL_COLOR);
+            for(CardView cardView : cardViews){
+                cardView.setCardBackgroundColor(NORMAL_COLOR);
             }
             deleteContactIndexes.clear();
         }

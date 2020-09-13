@@ -2,6 +2,7 @@ package com.example.contactapp.view;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -242,10 +243,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 if(!isOnDeleteMode){
                     for(int j = rvLayout.findFirstVisibleItemPosition(); j <= rvLayout.findLastVisibleItemPosition(); j++){
-                        Objects.requireNonNull(rvLayout.findViewByPosition(j)).setBackgroundColor(normalColor);
+                        CardView tmpCardView = (CardView) rvLayout.findViewByPosition(j);
+                        tmpCardView.setCardBackgroundColor(normalColor);
                     }
                     if(curHighlightIndex != -1 && rvLayout.findViewByPosition(curHighlightIndex) != null){
-                        Objects.requireNonNull(rvLayout.findViewByPosition(curHighlightIndex)).setBackgroundColor(highlightColor);
+                        CardView tmpCardView = (CardView) rvLayout.findViewByPosition(curHighlightIndex);
+                        tmpCardView.setCardBackgroundColor(highlightColor);
                     }
                 }
             }
@@ -269,7 +272,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             new Handler().postDelayed(() -> {
                                 // set màu nổi cho phần tử đang tìm, thêm vào danh sách nổi
                                 if(rvLayout.findViewByPosition(curHighlightIndex) != null){
-                                    Objects.requireNonNull(rvLayout.findViewByPosition(curHighlightIndex)).setBackgroundColor(highlightColor);
+                                    CardView tmpCardView = (CardView) rvLayout.findViewByPosition(curHighlightIndex);
+                                    tmpCardView.setCardBackgroundColor(highlightColor);
                                 }
                             }, 500);
 
