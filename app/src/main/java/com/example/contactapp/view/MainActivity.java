@@ -1,6 +1,7 @@
 package com.example.contactapp.view;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
@@ -48,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private LinearLayoutManagerWithSmoothScroller rvLayout;
 
     private SearchView svName;
-    private List<Contact> contacts;
     private RecyclerView rvContacts;
     private MyAdapter allContactAdapter;
     private MyAdapter favouriteContactAdapter;
@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FloatingActionButton fabFavourite;
     private FloatingActionButton fabDeleteContact;
 
+    private List<Contact> contacts;
     private int curHighlightIndex = -1;
     private final int highlightColor = Color.LTGRAY;
     private final int normalColor = Color.WHITE;
@@ -68,9 +69,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private boolean isShowingAddContactMode = false;
 
     // Default Value
-    private final String DEFAULT_CONTACT_AVATAR = "ic_baseline_person_24";
-    private final String DEFAULT_CONTACT_BACKGROUND = "default_contact_background";
-    private final boolean DEFAULT_CONTACT_FAVOURITE = false;
     private final int DEFAULT_MOREACTION_BUTTON_COLOR = Color.argb(255, 55, 0, 179);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +79,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         mapComponents();
         initialEvents();
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == 123 && resultCode == RESULT_OK) {
+            MyAdapter adapter = (MyAdapter) rvContacts.getAdapter();
+            viewModel.deleteContact(adapter.getCurTouchedContact());
+
+            if(data.getSerializableExtra("returnedContact") != null){
+                Contact returnedContact = (Contact) data.getSerializableExtra("returnedContact");
+                returnedContact.setId(adapter.getCurTouchedContact().getId());
+                viewModel.insertContact(returnedContact);
+            }
+
+            if(isShowingFavouriteContacts){
+                favouriteContactAdapter.notifyDataSetChanged();
+            } else {
+                allContactAdapter.notifyDataSetChanged();
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void setBackgroundColorForMoreActionButton(int resourceColor){
@@ -112,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     switch (i){
                         case DialogInterface.BUTTON_POSITIVE:
                             List<Integer> deleteContactIndexes = allContactAdapter.getDeleteContactIndexes();
-                            viewModel.deleteContacts(deleteContactIndexes);
+                            viewModel.deleteContactsByIndexes(deleteContactIndexes);
                             allContactAdapter.notifyDataSetChanged();
                             deleteContactIndexes.clear();
                             break;
@@ -139,8 +158,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         fabMoreAction.setOnClickListener(view -> {
-//            setBackgroundColorForMoreActionButton(getApplicationContext(), R.color.white);
-
             fabMoreAction.setBackgroundTintList(ColorStateList.valueOf(DEFAULT_MOREACTION_BUTTON_COLOR));
 
             if(isShowingFavouriteContacts){
@@ -169,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if(isOpenedMoreAction){
                 closeAnimation(true, true, true, true);
             } else{
-                openAnimation(true, true, true, true);
+                openAnimation();
             }
             isOpenedMoreAction = !isOpenedMoreAction;
         });
@@ -204,23 +221,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if(name.isEmpty() || phone.isEmpty() || address.isEmpty() || email.isEmpty()){
                     Toast.makeText(MainActivity.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
                 } else {
-                    Contact contact = new Contact(contacts.size() + 1, name, phone, address, email, DEFAULT_CONTACT_AVATAR, DEFAULT_CONTACT_BACKGROUND, DEFAULT_CONTACT_FAVOURITE);
+                    Contact contact = new Contact(viewModel.getAllContacts().getValue().size() + 1,
+                            name, address, email, phone,
+                            Contact.DEFAULT_CONTACT_AVATAR,
+                            Contact.DEFAULT_CONTACT_BACKGROUND,
+                            Contact.DEFAULT_CONTACT_FAVOURITE);
+                    int i = viewModel.insertContactIntoContactListByOrder(contact, viewModel.getAllContacts().getValue());
+                    viewModel.insertToDatabase(contact);
 
-                    boolean isAdded = false;
-                    int i;
-                    for(i = 0; i < contacts.size(); i++){
-                        if (contacts.get(i).getFirstName().compareToIgnoreCase(contact.getFirstName()) > 0){
-                            contacts.add(i, contact);
-                            isAdded = true;
-                            break;
-                        }
-                    }
-
-                    if(!isAdded) {
-                        contacts.add(contact);
-                    }
-
-                    viewModel.insert(contact);
                     allContactAdapter.notifyDataSetChanged();
                     rvContacts.smoothScrollToPosition(i);
                     curHighlightIndex = i;
@@ -295,37 +303,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    private void openAnimation(boolean isOpenMoreActionButton,
-                               boolean isOpenAddContactButton,
-                               boolean isOpenFavouriteContactButton,
-                               boolean isOpenDeleteContactButton) {
+    // set animation for all floating action buttons when touch it to open
+    private void openAnimation() {
+        Animation openMoreActionAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_zoomin_open_anim);
+        openMoreActionAnimation.setDuration(animationTime);
+        fabMoreAction.startAnimation(openMoreActionAnimation);
 
-        if(isOpenMoreActionButton){
-            Animation openMoreActionAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_zoomin_open_anim);
-            openMoreActionAnimation.setDuration(animationTime);
-            fabMoreAction.startAnimation(openMoreActionAnimation);
-        }
+        fabAdd.setVisibility(View.VISIBLE);
+        Animation openAddAnimation = AnimationUtils.loadAnimation(this, R.anim.float_diagonal_up);
+        openAddAnimation.setDuration(animationTime);
+        fabAdd.startAnimation(openAddAnimation);
+        fabAdd.setClickable(true);
 
-        if (isOpenAddContactButton){
-            fabAdd.setVisibility(View.VISIBLE);
-            Animation openAddAnimation = AnimationUtils.loadAnimation(this, R.anim.float_diagonal_up);
-            openAddAnimation.setDuration(animationTime);
-            fabAdd.startAnimation(openAddAnimation);
-        }
+        fabFavourite.setVisibility(View.VISIBLE);
+        Animation openFavouriteAnimation = AnimationUtils.loadAnimation(this, R.anim.float_up);
+        openFavouriteAnimation.setDuration(animationTime);
+        fabFavourite.startAnimation(openFavouriteAnimation);
+        fabFavourite.setClickable(true);
 
-        if(isOpenFavouriteContactButton){
-            fabFavourite.setVisibility(View.VISIBLE);
-            Animation openFavouriteAnimation = AnimationUtils.loadAnimation(this, R.anim.float_up);
-            openFavouriteAnimation.setDuration(animationTime);
-            fabFavourite.startAnimation(openFavouriteAnimation);
-        }
-
-        if(isOpenDeleteContactButton){
-            fabDeleteContact.setVisibility(View.VISIBLE);
-            Animation openDeleteAnimation = AnimationUtils.loadAnimation(this, R.anim.float_to_left);
-            openDeleteAnimation.setDuration(animationTime);
-            fabDeleteContact.startAnimation(openDeleteAnimation);
-        }
+        fabDeleteContact.setVisibility(View.VISIBLE);
+        Animation openDeleteAnimation = AnimationUtils.loadAnimation(this, R.anim.float_to_left);
+        openDeleteAnimation.setDuration(animationTime);
+        fabDeleteContact.startAnimation(openDeleteAnimation);
+        fabDeleteContact.setClickable(true);
     }
 
     private void closeAnimation(boolean isCloseMoreActionButton,
@@ -344,6 +344,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             closeAddAnimation.setDuration(animationTime);
             fabAdd.startAnimation(closeAddAnimation);
             fabAdd.setVisibility(View.GONE);
+            fabAdd.setClickable(false);
         }
 
         if (isCloseFavouriteContactButton){
@@ -351,6 +352,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             closeFavouriteAnimation.setDuration(animationTime);
             fabFavourite.startAnimation(closeFavouriteAnimation);
             fabFavourite.setVisibility(View.GONE);
+            fabFavourite.setClickable(false);
         }
 
         if(isCloseDeleteContactButton){
@@ -358,12 +360,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             closeDeleteAnimation.setDuration(animationTime);
             fabDeleteContact.startAnimation(closeDeleteAnimation);
             fabDeleteContact.setVisibility(View.GONE);
+            fabDeleteContact.setClickable(false);
         }
     }
 
     private void mapComponents() {
         viewModel = ViewModelProviders.of(MainActivity.this).get(MyViewModel.class);
-        contacts = viewModel.getContacts().getValue();
+        contacts = viewModel.getAllContacts().getValue();
 
         svName = findViewById(R.id.sv_name);
         rvContacts = findViewById(R.id.rv_contacts);

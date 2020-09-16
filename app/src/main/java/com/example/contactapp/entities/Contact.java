@@ -5,7 +5,6 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 @Entity (tableName = "contact")
 public class Contact implements Serializable {
@@ -34,6 +33,20 @@ public class Contact implements Serializable {
     @ColumnInfo (name = "isFavourite")
     private boolean isFavourite;
 
+    public static final String DEFAULT_CONTACT_AVATAR = "ic_baseline_person_24";
+    public static final String DEFAULT_CONTACT_BACKGROUND = "default_contact_background";
+    public static final boolean DEFAULT_CONTACT_FAVOURITE = false;
+
+    public Contact(String name, String address, String email, String phone, boolean isFavourite){
+        this.name = name;
+        this.address = address;
+        this.email = email;
+        this.phone = phone;
+        this.isFavourite = isFavourite;
+        this.avatar = DEFAULT_CONTACT_AVATAR;
+        this.background = DEFAULT_CONTACT_BACKGROUND;
+    }
+
     public Contact(int id, String name, String address, String email, String phone, String avatar, String background, boolean isFavourite){
         this.id = id;
         this.name = name;
@@ -46,7 +59,6 @@ public class Contact implements Serializable {
     }
 
     public Contact(String name, String address, String email, String phone, String avatar, String background, boolean isFavourite){
-        this.id = id;
         this.name = name;
         this.address = address;
         this.email = email;

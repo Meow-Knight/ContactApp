@@ -9,5 +9,14 @@
     <string name="assistance_item">Hỗ trợ và phản hồi</string>
     <string name="version_item">Thông tin phiên bản</string>
     <string name="item_other">Others</string>
+    <string name="edit_contact_title">Chỉnh sửa liên hệ</string>
+    <string name="edit_name_title">Họ tên:</string>
+    <string name="edit_phone_title">Số điện thoại:</string>
+    <string name="edit_address_title">Địa chỉ:</string>
+    <string name="edit_favourite_contact_title">Liên hệ yêu thích?</string>
+    <string name="edit_yes_favourite">Có</string>
+    <string name="edit_no_favourite">Không</string>
+    <string name="delete_contact_title">Xóa liên hệ</string>
+    <string name="edit_email_title">Email:</string>
 
 </resources>

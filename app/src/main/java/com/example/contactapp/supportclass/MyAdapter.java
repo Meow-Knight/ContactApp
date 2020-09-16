@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.contactapp.R;
 import com.example.contactapp.entities.Contact;
 import com.example.contactapp.view.DetailContactActivity;
+import com.example.contactapp.view.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.List;
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private List<CardView> cardViews;
     private List<Contact> contacts;
+    private Contact curTouchedContact;
 
     private List<Integer> deleteContactIndexes;
     private boolean isOnDeleteMode;
@@ -53,12 +55,15 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             cardView = itemView.findViewById(R.id.cv_item);
 
             view.setOnClickListener(view -> {
+                curTouchedContact = contacts.get(getLayoutPosition());
                 if(!isOnDeleteMode){
+                    // open detail contact activity and send a contact, it can be edited after
+                    MainActivity mainActivity = (MainActivity) context;
                     int pos = getLayoutPosition();
-                    Intent intent = new Intent(context, DetailContactActivity.class);
-                    intent.putExtra("contact", contacts.get(pos));
 
-                    context.startActivity(intent);
+                    Intent intent = new Intent(mainActivity, DetailContactActivity.class);
+                    intent.putExtra("contact", contacts.get(pos));
+                    mainActivity.startActivityForResult(intent, 123);
                 } else {
                     Integer position = getLayoutPosition();
                     /* contact selected will be change background color to prepare for deleting soon */
@@ -77,6 +82,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
                 }
             });
         }
+    }
+
+    public Contact getCurTouchedContact(){
+        return curTouchedContact;
     }
 
     public List<Integer> getDeleteContactIndexes(){

@@ -16,7 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".view.MyAccountInformationActivity"></activity>
+        <activity android:name=".view.EditContactActivity"></activity>
+        <activity android:name=".view.MyAccountInformationActivity" />
         <activity android:name=".view.DetailContactActivity" />
         <activity android:name=".view.MainActivity">
             <intent-filter>

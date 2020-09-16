@@ -40,7 +40,21 @@
     </androidx.cardview.widget.CardView>
 
     <TextView
-        android:id="@+id/tv_name"
+        android:id="@+id/tv_bottom_support_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginBottom="23dp"
+        android:gravity="center_vertical"
+        android:text="Name"
+        android:textColor="@color/red"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/cv_container"
+        app:layout_constraintStart_toEndOf="@+id/cv_container" />
+
+    <TextView
+        android:id="@+id/tv_left_support_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -48,7 +62,21 @@
         android:layout_marginBottom="24dp"
         android:gravity="center_vertical"
         android:text="Name"
-        android:textColor="@color/black"
+        android:textColor="@color/colorAccent"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/cv_container"
+        app:layout_constraintStart_toEndOf="@+id/cv_container" />
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginBottom="24dp"
+        android:gravity="center_vertical"
+        android:text="Name"
+        android:textColor="@color/white"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="@+id/cv_container"
         app:layout_constraintStart_toEndOf="@+id/cv_container" />
@@ -64,7 +92,7 @@
         tools:ignore="VectorDrawableCompat" />
 
     <ImageView
-        android:id="@+id/iv_favourite"
+        android:id="@+id/iv_yes_favourite"
         android:layout_width="45dp"
         android:layout_height="43dp"
         android:layout_marginEnd="12dp"
@@ -72,6 +100,32 @@
         app:layout_constraintBottom_toBottomOf="@+id/iv_edit"
         app:layout_constraintEnd_toStartOf="@+id/iv_edit"
         app:srcCompat="@drawable/ic_baseline_favorite_24"
+        tools:ignore="VectorDrawableCompat"
+        app:tint="@color/red" />
+
+    <ImageView
+        android:id="@+id/iv_no_favourite"
+        android:layout_width="45dp"
+        android:layout_height="43dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginRight="12dp"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_edit"
+        app:layout_constraintEnd_toStartOf="@+id/iv_edit"
+        app:srcCompat="@drawable/ic_baseline_favorite_24"
+        tools:ignore="VectorDrawableCompat"
+        app:tint="@color/white" />
+
+    <ImageView
+        android:id="@+id/iv_back_to_main"
+        android:layout_width="45dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_arrow_back_24"
+        android:alpha="0.7"
         tools:ignore="VectorDrawableCompat" />
 
     <TextView
