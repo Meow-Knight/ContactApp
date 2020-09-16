@@ -8,34 +8,36 @@
 
     <ImageView
         android:id="@+id/iv_cancel"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textView2"
+        app:layout_constraintTop_toTopOf="@+id/tv_edit_title"
         app:srcCompat="@drawable/ic_baseline_arrow_back_24"
-        app:tint="@color/gray" />
+        app:tint="@color/darkTurquoise" />
 
     <ImageView
         android:id="@+id/iv_change_contact"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textView2"
+        app:layout_constraintTop_toTopOf="@+id/tv_edit_title"
         app:srcCompat="@drawable/ic_baseline_check_24"
-        app:tint="@color/gray" />
+        app:tint="@color/darkTurquoise" />
 
-    <TextView
-        android:id="@+id/textView2"
+    <com.example.contactapp.customizeview.RobotoTextView
+        android:id="@+id/tv_edit_title"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="4dp"
         android:gravity="center"
         android:text="@string/edit_contact_title"
         android:textColor="@color/black"
-        android:textSize="26sp"
+        android:textSize="28sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:typeface="roboto_bold" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cv_edit_name"
@@ -43,7 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="130dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="10dp"
         android:layout_marginRight="10dp"
         android:elevation="8dp"
@@ -51,21 +53,22 @@
         app:cardElevation="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2">
+        app:layout_constraintTop_toBottomOf="@+id/cv_container">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView
+            <com.example.contactapp.customizeview.RobotoTextView
                 android:id="@+id/tv_name_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
-                android:text="@string/edit_name_title"
+                android:text="@string/name_title"
+                app:typeface="roboto_medium"
                 android:textSize="20sp" />
 
             <EditText
@@ -100,14 +103,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
+            <com.example.contactapp.customizeview.RobotoTextView
                 android:id="@+id/tv_phone_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
-                android:text="@string/edit_phone_title"
+                android:text="@string/phone_title"
+                app:typeface="roboto_medium"
                 android:textSize="20sp" />
 
             <EditText
@@ -141,14 +145,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
+            <com.example.contactapp.customizeview.RobotoTextView
                 android:id="@+id/tv_address_title"
                 android:layout_gravity="center"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/edit_address_title"
+                android:text="@string/address_title"
+                app:typeface="roboto_medium"
                 android:textSize="20sp"
                 android:paddingStart="15dp" />
 
@@ -158,7 +163,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:inputType="textPersonName"/>
+                android:inputType="textMultiLine"/>
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
@@ -183,14 +188,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
+            <com.example.contactapp.customizeview.RobotoTextView
                 android:id="@+id/tv_email_title"
                 android:layout_gravity="center"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/edit_email_title"
+                android:text="@string/email_title"
+                app:typeface="roboto_medium"
                 android:textSize="20sp"
                 android:paddingStart="15dp" />
 
@@ -226,7 +232,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
+            <com.example.contactapp.customizeview.RobotoTextView
                 android:id="@+id/tv_favourite_contact_title"
                 android:layout_gravity="center"
                 android:paddingRight="10dp"
@@ -234,6 +240,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/edit_favourite_contact_title"
+                app:typeface="roboto_medium"
                 android:textSize="20sp" />
 
             <EditText
@@ -273,21 +280,41 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <ImageView
-        android:id="@+id/imageView"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_container"
         android:layout_width="76dp"
         android:layout_height="76dp"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
+        android:padding="10dp"
+        app:cardCornerRadius="40dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2"
-        app:srcCompat="@drawable/ic_baseline_person_24" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_edit_title">
+
+        <ImageView
+            android:id="@+id/iv_avatar"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/ic_baseline_person_24" />
+    </androidx.cardview.widget.CardView>
+<!--    <ImageView-->
+<!--        android:id="@+id/imageView"-->
+<!--        android:layout_width="76dp"-->
+<!--        android:layout_height="76dp"-->
+<!--        android:layout_marginTop="20dp"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.498"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/textView2"-->
+<!--        app:srcCompat="@drawable/ic_baseline_person_24" />-->
 
     <Button
         android:id="@+id/bt_delete_contact"
-        android:textColor="@color/red"
+        android:textColor="@color/white"
         android:background="@drawable/rounded_corners"
+        android:backgroundTint="#C32424"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingStart="10dp"

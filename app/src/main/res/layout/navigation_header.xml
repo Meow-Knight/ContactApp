@@ -44,7 +44,7 @@
         app:layout_constraintStart_toStartOf="@id/tv_header_nw_name"
         app:layout_constraintTop_toBottomOf="@id/tv_header_nw_name"
         android:text="Actived"
-        android:textColor="@color/green"
+        android:textColor="#0F8502"
         android:layout_marginTop="5dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

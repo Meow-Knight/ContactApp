@@ -21,6 +21,7 @@ public class EditContactActivity extends AppCompatActivity {
     // components
     private ImageView ivCancel;
     private ImageView ivChange;
+    private ImageView ivAvatar;
     private EditText etName;
     private EditText etPhone;
     private EditText etAddress;
@@ -53,6 +54,8 @@ public class EditContactActivity extends AppCompatActivity {
             } else {
                 rbNoFavourite.setChecked(true);
             }
+            int avatarId = getResources().getIdentifier("com.example.contactapp:drawable/" + curContact.getAvatar(), null, null);
+            ivAvatar.setImageResource(avatarId);
         }
 
         initialEvents();
@@ -106,6 +109,7 @@ public class EditContactActivity extends AppCompatActivity {
     private void mapComponents() {
         ivCancel = findViewById(R.id.iv_cancel);
         ivChange = findViewById(R.id.iv_change_contact);
+        ivAvatar = findViewById(R.id.iv_avatar);
         etName = findViewById(R.id.et_edit_name);
         etPhone = findViewById(R.id.et_edit_phone);
         etAddress = findViewById(R.id.et_edit_address);

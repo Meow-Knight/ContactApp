@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">ContactApp</string>
+    <string name="temporary_string">Temporary</string>
     <string name="add_contact">Add</string>
     <string name="cancel">Cancel</string>
     <string name="searchHint">Tìm kiếm theo họ và tên...</string>
@@ -10,13 +11,14 @@
     <string name="version_item">Thông tin phiên bản</string>
     <string name="item_other">Others</string>
     <string name="edit_contact_title">Chỉnh sửa liên hệ</string>
-    <string name="edit_name_title">Họ tên:</string>
-    <string name="edit_phone_title">Số điện thoại:</string>
-    <string name="edit_address_title">Địa chỉ:</string>
+    <string name="name_title">Họ tên</string>
+    <string name="phone_title">Số điện thoại</string>
+    <string name="address_title">Địa chỉ</string>
+    <string name="email_title">Email</string>
     <string name="edit_favourite_contact_title">Liên hệ yêu thích?</string>
     <string name="edit_yes_favourite">Có</string>
     <string name="edit_no_favourite">Không</string>
     <string name="delete_contact_title">Xóa liên hệ</string>
-    <string name="edit_email_title">Email:</string>
+    <string name="open_menu_description">open navigation detail</string>
 
 </resources>

@@ -4,9 +4,25 @@
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
     <color name="green">#00FF08</color>
-    <color name="darkgreen">#1B701E</color>
+    <color name="dark_green">#1B701E</color>
+    <color name="little_dark_green">#228725</color>
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="red">#FF0000</color>
     <color name="gray">#808080</color>
+    <color name="black_gray">#404040</color>
+
+    <!-- set 1st color -->
+    <color name="turquoise">#8FDDE7</color>
+    <color name="rosewater">#FFC2C7</color>
+    <color name="spearmint">#B6E5D8</color>
+    <color name="peach">#FBE5C8</color>
+
+    <!-- set 2nd color -->
+    <color name="midnightBlue">#3A5673</color>
+    <color name="darkTurquoise">#51B9CD</color>
+    <color name="babyBlue">#AAF1F5</color>
+    <color name="roseQuartz">#F8E5E6</color>
+    <color name="darkBlue">#151983</color>
+    <color name="royalBlue">#1863D6</color>
 </resources>

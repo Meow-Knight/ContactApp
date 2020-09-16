@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private NavigationView navigationView;
     private LinearLayoutManagerWithSmoothScroller rvLayout;
 
+    private ImageView ivAvatar;
     private SearchView svName;
     private RecyclerView rvContacts;
     private MyAdapter allContactAdapter;
@@ -81,6 +82,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         initialEvents();
     }
 
+    /* Get contact returned from DetailContactActivity
+        Delete old contact got by getCurTouchedContact method
+        if returned contact has not null value, replace deleted contact
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == 123 && resultCode == RESULT_OK) {
@@ -90,7 +95,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if(data.getSerializableExtra("returnedContact") != null){
                 Contact returnedContact = (Contact) data.getSerializableExtra("returnedContact");
                 returnedContact.setId(adapter.getCurTouchedContact().getId());
+                returnedContact.setAvatar(adapter.getCurTouchedContact().getAvatar());
+                returnedContact.setBackground(adapter.getCurTouchedContact().getBackground());
                 viewModel.insertContact(returnedContact);
+            } else {
+                Toast.makeText(MainActivity.this, "Đã xóa liên hệ", Toast.LENGTH_SHORT).show();
             }
 
             if(isShowingFavouriteContacts){
@@ -368,6 +377,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         viewModel = ViewModelProviders.of(MainActivity.this).get(MyViewModel.class);
         contacts = viewModel.getAllContacts().getValue();
 
+        ivAvatar = findViewById(R.id.iv_avatar);
         svName = findViewById(R.id.sv_name);
         rvContacts = findViewById(R.id.rv_contacts);
         fabAdd = findViewById(R.id.fab_add);

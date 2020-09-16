@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.contactapp.R;
 import com.example.contactapp.entities.Contact;
@@ -65,9 +66,9 @@ public class DetailContactActivity extends AppCompatActivity {
             curContact = (Contact) intent.getSerializableExtra("contact");
             setNameView(curContact.getName());
 
-            tvPhone.setText("SĐT: " + curContact.getPhone());
-            tvAddress.setText("Địa chỉ: " + curContact.getAddress());
-            tvEmail.setText("Email: " + curContact.getEmail());
+            tvPhone.setText(curContact.getPhone());
+            tvAddress.setText(curContact.getAddress());
+            tvEmail.setText(curContact.getEmail());
 
             int avatarId = getResources().getIdentifier("com.example.contactapp:drawable/" + curContact.getAvatar(), null, null);
             int backgroundId = getResources().getIdentifier("com.example.contactapp:drawable/" + curContact.getBackground(), null, null);
@@ -111,6 +112,7 @@ public class DetailContactActivity extends AppCompatActivity {
                 setResult(RESULT_OK, returnedIntent);
                 finish();
             } else {
+                Toast.makeText(DetailContactActivity.this, "Đã thay đổi dữ liệu", Toast.LENGTH_SHORT).show();
                 curContact = (Contact) data.getSerializableExtra("changedContact");
                 // display new data
                 setNameView(curContact.getName());

@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -43,6 +44,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public View view;
         public TextView tvAcc;
+        public ImageView ivAvatar;
         public Context context;
         public CardView cardView;
 
@@ -52,6 +54,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             this.context = context;
 
             tvAcc = itemView.findViewById(R.id.tv_name);
+            ivAvatar = itemView.findViewById(R.id.iv_avatar);
             cardView = itemView.findViewById(R.id.cv_item);
 
             view.setOnClickListener(view -> {
@@ -67,15 +70,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
                 } else {
                     Integer position = getLayoutPosition();
                     /* contact selected will be change background color to prepare for deleting soon */
-                    Drawable itemDrawable = itemView.getBackground();
-                    int itemColor = -1;
-                    if(itemDrawable instanceof ColorDrawable){
-                        itemColor = ((ColorDrawable) itemDrawable).getColor();
-                    }
+                    int itemColor = cardView.getCardBackgroundColor().getDefaultColor();
                     if(itemColor != HIGHLIGHT_DELETE_COLOR){
                         cardView.setCardBackgroundColor(HIGHLIGHT_DELETE_COLOR);
                         deleteContactIndexes.add(position);
                     } else {
+                        System.out.println("hightlight-------------------");
                         cardView.setCardBackgroundColor(NORMAL_COLOR);
                         deleteContactIndexes.remove(position);
                     }
@@ -117,6 +117,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         }
 
         holder.tvAcc.setText(contacts.get(position).getName());
+        int avatarId = holder.context.getResources()
+                .getIdentifier("com.example.contactapp:drawable/" + contacts.get(position).getAvatar(), null, null);
+        holder.ivAvatar.setImageResource(avatarId);
+
         if(isOnDeleteMode && deleteContactIndexes.contains(position)){
             holder.cardView.setBackgroundColor(HIGHLIGHT_DELETE_COLOR);
         }

@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Nhập thông tin"
-        android:textColor="#D81743"
+        android:textColor="#138504"
         android:gravity="center"
         android:textSize="30sp"/>
     <LinearLayout
@@ -74,6 +74,7 @@
         android:orientation="horizontal">
 
         <Button
+            android:backgroundTint="#FFDADA"
             android:id="@+id/bt_cancel"
             android:text="Hủy"
             android:layout_width="wrap_content"
@@ -81,6 +82,7 @@
             android:layout_weight="5"/>
 
         <Button
+            android:backgroundTint="#C1F6AB"
             android:id="@+id/bt_add"
             android:text="Thêm"
             android:layout_width="wrap_content"
